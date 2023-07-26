@@ -8,15 +8,3 @@ a {
 }
 
 
-/* .orderTable 有線框的樣式 */
-#orderTable {
-    border-collapse: collapse;
-    border: 1px solid #000;
-}
-
-/* .orderTable td 有線框的樣式 */
-#orderTable th,
-#orderTable td {
-    padding: 5px;
-    border: 1px solid #000;
-}

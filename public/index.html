@@ -10,21 +10,24 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
-<link rel="stylesheet" href="stylesheets/style.css">
+    <link rel="stylesheet" href="stylesheets/style.css">
 </head>
 
 <body>
- <div id="root"></div>
- <script type="text/babel">
-    const {useState,useEffect} = React;
+    <div id="root"></div>
+    <script type="text/babel">
+        const {useState,useEffect} = React;
 
 
-    function  App(){
-        //
-        const [todos, setTodos] = useState([]);
+    function App() {
+    const [todos, setTodos] = useState([]);
+    const [newTodoText, setNewTodoText] = useState("");
+    const [editingTodo, setEditingTodo] = useState(null);
+    const [editingText, setEditingText] = useState("");
 
-        useEffect(() => {
-            axios.get('/todos')
+    // Get todos
+    useEffect(() => {
+        axios.get('/todos')
             .then(function (response) {
                 const todos = response.data;
                 setTodos(todos);
@@ -32,30 +35,83 @@
             .catch(function (err) {
                 // Error happened
             });  
-        }, [])
+    }, [])
 
-
-        return(
-            <div>
-                <h1>hello world</h1>
-                <table id="orderTable">
-                    {todos.map((item,index)=>{
-                        return (
-                            <tr key={index}>
-                                <td>{item.id}</td>
-                                <td>{item.title}</td>
-                                <td>{item.completed ? "完整" : "不完整"}</td>
-                            </tr>
-                        )
-                    })}
-                </table>
-            </div>
-        )
+    // Add todo
+    function addTodo() {
+        axios.post('/todos', { text: newTodoText })
+            .then(function (response) {
+                setTodos([...todos, response.data]);
+                setNewTodoText("");
+            })
+            .catch(function (err) {
+                // Error happened
+            });
     }
- 
+
+    // Start editing a todo
+    function startEditing(id, text) {
+        setEditingTodo(id);
+        setEditingText(text);
+    }
+
+    // Update todo
+    function updateTodo() {
+        axios.put(`/todos/${editingTodo}`, { text: editingText })
+            .then(function (response) {
+                setTodos(todos.map(todo => todo.id === editingTodo ? response.data : todo));
+                setEditingTodo(null);
+                setEditingText("");
+            })
+            .catch(function (err) {
+                // Error happened
+            });
+    }
+
+    // Delete todo
+    function deleteTodo(id) {
+        axios.delete(`/todos/${id}`)
+            .then(function (response) {
+                setTodos(todos.filter(todo => todo.id !== id));
+            })
+            .catch(function (err) {
+                // Error happened
+            });
+    }
+
+    // Render
+    return (
+        <div>
+            <h1>待辦事項</h1>
+            <input type="text" value={newTodoText} onChange={e => setNewTodoText(e.target.value)} />
+            <button onClick={addTodo}>新增</button>
+          
+            <table>
+                {todos.map((item,index)=>{
+                    return (
+                        <tr key={index}>
+                            <td>{item.id}</td>
+                            <td>{item.text}</td>
+                            <td>
+                                <button onClick={() => startEditing(item.id, item.text)}>編輯</button>
+                                <button onClick={() => deleteTodo(item.id)}>刪除</button>
+                            </td>
+                        </tr>
+                    )
+                })}
+            </table>
+            {editingTodo !== null && (
+                <div>
+                    <input type="text" value={editingText} onChange={e => setEditingText(e.target.value)} />
+                    <button onClick={updateTodo}>完成編輯</button>
+                </div>
+            )}
+        </div>
+    )
+}
+
      // 將 App 組件掛載到指定的 DOM 元素上
-     ReactDOM.createRoot(document.querySelector('#root'))
-        .render(<App/>)
+     ReactDOM.createRoot(document.querySelector('#root')).render(<App/>);
  </script>
 </body>
 
