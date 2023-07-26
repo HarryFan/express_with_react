@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW"> <!-- 將語言設定為繁體中文 -->
+<html lang="zh-TW"> <!-- 將語言設定繁體中文 -->
 
 <head>
     <meta charset="UTF-8">
@@ -16,98 +16,96 @@
 <body>
     <div id="root"></div>
     <script type="text/babel">
-        const {useState,useEffect} = React;
-
+        const {useState,useEffect} = React; // 從 React 中引入 useState 和 useEffect
 
     function App() {
-    const [todos, setTodos] = useState([]); // 儲存待辦事項
-    const [newTodoText, setNewTodoText] = useState(""); // 儲存新待辦事項的文字
-    const [editingTodo, setEditingTodo] = useState(null); // 儲存正在編輯的待辦事項
-    const [editingText, setEditingText] = useState(""); // 儲存正在編輯的待辦事項的文字
+    const [todos, setTodos] = useState([]); // 儲存待辦事項的狀態
+    const [newTodoText, setNewTodoText] = useState(""); // 儲存新待辦事項的文字的狀態
+    const [editingTodo, setEditingTodo] = useState(null); // 儲存正在編輯的待辦事項的狀態
+    const [editingText, setEditingText] = useState(""); // 儲存正在編輯的待辦事項的文字的狀態
 
-    // 取得待辦事項
+    // 使用 useEffect 來取得待辦事項
     useEffect(() => {
-        axios.get('/todos')
+        axios.get('/todos') // 從伺服器取得待辦事項
             .then(function (response) {
-                const todos = response.data;
-                setTodos(todos);
+                const todos = response.data; // 從回應中取得待辦事項
+                setTodos(todos); // 更新待辦事項的狀態
             })
             .catch(function (err) {
-                // 發生錯誤
+                // 處理錯誤
             });  
     }, [])
 
-    // 新增待辦事項
+    // 新增待辦事項的函式
     function addTodo() {
-        axios.post('/todos', { text: newTodoText })
+        axios.post('/todos', { text: newTodoText }) // 將新的待辦事項發送到伺服器
             .then(function (response) {
-                setTodos([...todos, response.data]);
-                setNewTodoText("");
+                setTodos([...todos, response.data]); // 更新待辦事項的狀態
+                setNewTodoText(""); // 清空輸入框
             })
             .catch(function (err) {
-                // 發生錯誤
+                // 處理錯誤
             });
     }
 
-    // 開始編輯待辦事項
+    // 開始編輯待辦事項的函式
     function startEditing(id, text) {
-        setEditingTodo(id);
-        setEditingText(text);
+        setEditingTodo(id); // 設定正在編輯的待辦事項
+        setEditingText(text); // 設定正在編輯的待辦事項的文字
     }
 
-    // 更新待辦事項
+    // 更新待辦事項的函式
     function updateTodo() {
-        axios.put(`/todos/${editingTodo}`, { text: editingText })
+        axios.put(`/todos/${editingTodo}`, { text: editingText }) // 將更新的待辦事項發送到伺服器
             .then(function (response) {
-                setTodos(todos.map(todo => todo.id === editingTodo ? response.data : todo));
-                setEditingTodo(null);
-                setEditingText("");
+                setTodos(todos.map(todo => todo.id === editingTodo ? response.data : todo)); // 更新待辦事項的狀態
+                setEditingTodo(null); // 清空正在編輯的待辦事項
+                setEditingText(""); // 清空正在編輯的待辦事項的文字
             })
             .catch(function (err) {
-                // 發生錯誤
+                // 處理錯誤
             });
     }
 
-    // 刪除待辦事項
+    // 刪除待辦事項的函式
     function deleteTodo(id) {
-        axios.delete(`/todos/${id}`)
+        axios.delete(`/todos/${id}`) // 將待辦事項的 id 發送到伺服器以刪除待辦事項
             .then(function (response) {
-                setTodos(todos.filter(todo => todo.id !== id));
+                setTodos(todos.filter(todo => todo.id !== id)); // 更新待辦事項的狀態
             })
             .catch(function (err) {
-                // 發生錯誤
+                // 處理錯誤
             });
     }
 
-    // 渲染
+    // 渲染函式
     return (
         <div>
             <h1>待辦事項</h1>
-            <input type="text" value={newTodoText} onChange={e => setNewTodoText(e.target.value)} />
+            <input class="item" type="text" value={newTodoText} onChange={e => setNewTodoText(e.target.value)} /> 
             <button onClick={addTodo}>新增</button>
           
-            <table>
+            <div>
                 {todos.map((item,index)=>{
                     return (
-                        <tr key={index}>
-                            <td>{item.id}</td>
-                            <td>{item.text}</td>
-                            <td>
-                                <button onClick={() => startEditing(item.id, item.text)}>編輯</button>
+                        <div class="item" key={index}>
+                            <div>{item.id}{item.text}
+                                <button onClick={() => startEditing(item.id, item.text)}>編輯</button> 
                                 <button onClick={() => deleteTodo(item.id)}>刪除</button>
-                            </td>
-                        </tr>
+                            </div>
+                        </div>
                     )
                 })}
-            </table>
+            </div>
             {editingTodo !== null && (
-                <div>
-                    <input type="text" value={editingText} onChange={e => setEditingText(e.target.value)} />
-                    <button onClick={updateTodo}>完成編輯</button>
+                <div class="item">
+                    <input type="text" value={editingText} onChange={e => setEditingText(e.target.value)} /> 
+                <button onClick={updateTodo}>完成編輯</button>
                 </div>
             )}
         </div>
     )
+
 }
 
      // 將 App 組件掛載到指定的 DOM 元素上
@@ -116,4 +114,5 @@
 </body>
 
 </html>
+
 
