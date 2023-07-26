@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW"> <!-- 將語言設定為繁體中文 -->
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>待辦事項</title> <!-- 更改網頁標題 -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
@@ -20,12 +20,12 @@
 
 
     function App() {
-    const [todos, setTodos] = useState([]);
-    const [newTodoText, setNewTodoText] = useState("");
-    const [editingTodo, setEditingTodo] = useState(null);
-    const [editingText, setEditingText] = useState("");
+    const [todos, setTodos] = useState([]); // 儲存待辦事項
+    const [newTodoText, setNewTodoText] = useState(""); // 儲存新待辦事項的文字
+    const [editingTodo, setEditingTodo] = useState(null); // 儲存正在編輯的待辦事項
+    const [editingText, setEditingText] = useState(""); // 儲存正在編輯的待辦事項的文字
 
-    // Get todos
+    // 取得待辦事項
     useEffect(() => {
         axios.get('/todos')
             .then(function (response) {
@@ -33,11 +33,11 @@
                 setTodos(todos);
             })
             .catch(function (err) {
-                // Error happened
+                // 發生錯誤
             });  
     }, [])
 
-    // Add todo
+    // 新增待辦事項
     function addTodo() {
         axios.post('/todos', { text: newTodoText })
             .then(function (response) {
@@ -45,17 +45,17 @@
                 setNewTodoText("");
             })
             .catch(function (err) {
-                // Error happened
+                // 發生錯誤
             });
     }
 
-    // Start editing a todo
+    // 開始編輯待辦事項
     function startEditing(id, text) {
         setEditingTodo(id);
         setEditingText(text);
     }
 
-    // Update todo
+    // 更新待辦事項
     function updateTodo() {
         axios.put(`/todos/${editingTodo}`, { text: editingText })
             .then(function (response) {
@@ -64,22 +64,22 @@
                 setEditingText("");
             })
             .catch(function (err) {
-                // Error happened
+                // 發生錯誤
             });
     }
 
-    // Delete todo
+    // 刪除待辦事項
     function deleteTodo(id) {
         axios.delete(`/todos/${id}`)
             .then(function (response) {
                 setTodos(todos.filter(todo => todo.id !== id));
             })
             .catch(function (err) {
-                // Error happened
+                // 發生錯誤
             });
     }
 
-    // Render
+    // 渲染
     return (
         <div>
             <h1>待辦事項</h1>
@@ -116,3 +116,4 @@
 </body>
 
 </html>
+
