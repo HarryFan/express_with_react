@@ -22,7 +22,7 @@
     <h2 class="text-center text-gray-700">Vue2 待辦事項</h2>
 
     <div class="flex items-center justify-between">
-      <input class="input-todo form-input mt-4 block w-3/4" v-model="newTodoText" placeholder="新增待辦事項">
+      <input class="input-todo form-input mt-4 block w-3/4 border p-2" v-model="newTodoText" type="text" placeholder="新增待辦事項">
       <button class="add mt-4 px-4 py-2 rounded text-white bg-blue-500 hover:bg-blue-700 ml-4"
         @click="addTodo">新增</button>
     </div>
@@ -41,7 +41,7 @@
     </ul>
 
     <div class="flex items-center justify-between" v-if="editingTodo">
-      <input class="input-todo form-input mt-4 block w-3/4" v-model="editingTodo.text">
+      <input class="input-todo form-input mt-4 block w-3/4 border p-2" v-model="editingTodo.text"　type="text">
       <button class="edit mt-4 px-4 py-2 rounded text-white bg-yellow-500 hover:bg-yellow-700 ml-4"
         @click="updateTodo">更新</button>
     </div>
