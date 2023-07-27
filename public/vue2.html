@@ -16,55 +16,81 @@
     <div id="app">
 
         <h2>待辦事項</h2>
-        
+      
         <input v-model="newTodoText" placeholder="新增待辦事項">
-        
+      
         <button @click="addTodo">新增</button>
       
         <ul>
           <li v-for="todo in todos">
-            {{ todo.text }} 
+            {{ todo.text }}  
             <button @click="deleteTodo(todo.id)">刪除</button>
+            <button @click="setEditingTodo(todo)">編輯</button>
           </li>
         </ul>
+      
+        <input v-model="editingTodo.text" v-if="editingTodo">
+        <button @click="updateTodo" v-if="editingTodo">更新</button>
       
       </div>
       
       <script>
       const app = new Vue({
         el: '#app',
+        
         data() {
           return {
             newTodoText: '',
+            editingTodo: null,
             todos: []
           }
         },
+      
         methods: {
           getTodos() {
             axios.get('/todos')
               .then(res => {
                 this.todos = res.data
-              })
+              }) 
           },
+          
           addTodo() {
             const text = this.newTodoText
+            
             axios.post('/todos', { text })
               .then(res => {
                 this.todos.push(res.data)
-                this.newTodoText = ''
-              }) 
+                this.newTodoText = ''  
+              })
           },
+          
           deleteTodo(id) {
-            axios.delete(`/todos/${id}`)
+            axios.delete(`/todos/${id}`) 
               .then(() => {
-                this.todos = this.todos.filter(t => t.id !== id)  
+                this.todos = this.todos.filter(t => t.id !== id)
+              })
+          },
+          
+          setEditingTodo(todo) {
+            this.editingTodo = todo
+          },
+          
+          updateTodo() {
+            axios.put(`/todos/${this.editingTodo.id}`, {
+              text: this.editingTodo.text
+            })
+              .then(res => {
+                const index = this.todos.findIndex(t => t.id === this.editingTodo.id)
+                this.todos.splice(index, 1, res.data)
+                this.editingTodo = null
               })
           }
         },
-        
+      
         mounted() {
           this.getTodos()
         }
+        
       })
       </script>
 
