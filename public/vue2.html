@@ -14,9 +14,8 @@
 <style>
   body {
     font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
     background-color: #f0f0f0;
+    color: #333;
   }
   
   #app {
@@ -29,20 +28,38 @@
   
   h2 {
     color: #333;
+    text-align: center;
   }
   
-  input, button {
-    padding: 10px;
-    margin: 5px 0;
+  .input-todo {
+    width: 80%; 
+    padding: 5px;
+  }
+  
+  button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    border: none;
+    color: #fff;
+    background-color: #007bff;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  .delete-button {
+    background-color: #dc3545;
   }
   
   ul {
-    list-style-type: none;
+    list-style: none; 
     padding: 0;
   }
   
   li {
-    margin: 10px 0;
+    margin-bottom: 10px;
   }
 </style>
   </head>
@@ -51,20 +68,21 @@
 
         <h2>Vue2 待辦事項</h2>
       
-        <input v-model="newTodoText" placeholder="新增待辦事項">
+        <input class="input-todo" v-model="newTodoText" placeholder="新增待辦事項">
       
-        <button @click="addTodo">新增</button>
+        <button class="add" @click="addTodo">新增</button>
       
         <ul>
           <li v-for="todo in todos">
             {{ todo.text }}  
-            <button @click="deleteTodo(todo.id)">刪除</button>
-            <button @click="setEditingTodo(todo)">編輯</button>
+         
+            <button class="edit" @click="setEditingTodo(todo)">編輯</button> 
+            <button class="delete-button" @click="deleteTodo(todo.id)">刪除</button>
           </li>
         </ul>
       
-        <input v-model="editingTodo.text" v-if="editingTodo">
-        <button @click="updateTodo" v-if="editingTodo">更新</button>
+        <input class="input-todo" v-model="editingTodo.text" v-if="editingTodo">
+        <button class="edit" @click="updateTodo" v-if="editingTodo">更新</button>
       
       </div>
       
@@ -129,6 +147,6 @@
       </script>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
-    <script src="app.js"></script>
+
   </body>
 </html>

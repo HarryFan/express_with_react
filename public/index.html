@@ -14,54 +14,44 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             background-color: #f0f0f0;
+            color: #333;
         }
-        .app {
+        #app {
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background-color: #fff;
         }
-        .title {
+        h2 {
+            color: #333;
             text-align: center;
         }
-        .input-item {
-            width: 100%;
-            padding: 10px;
+        button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            border: none;
+            color: #fff;
+            background-color: #007bff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .input-todo {
+            width: 80%; 
+            padding: 5px;
+        }
+        .delete-button {
+            background-color: #dc3545;
+        }
+        ul {
+            list-style: none; 
+            padding: 0;
+        }
+        li {
             margin-bottom: 10px;
-        }
-        .btn {
-            padding: 10px 20px;
-            margin: 5px;
-        }
-        .btn-add {
-            background-color: #5cb85c;
-            color: white;
-        }
-        .btn-edit {
-            background-color: #f0ad4e;
-            color: white;
-        }
-        .btn-delete {
-            background-color: #d9534f;
-            color: white;
-        }
-        .btn-update {
-            background-color: #0275d8;
-            color: white;
-        }
-        .todo-item {
-            background-color: white;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-        }
-        .editing-item {
-            background-color: #dff0d8;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
         }
     </style>
 </head>
@@ -133,27 +123,26 @@
 
     // 渲染函式
     return (
-        <div className="app">
-            <h1 className="title">React 待辦事項</h1>
-            <input className="input-item" type="text" value={newTodoText} onChange={e => setNewTodoText(e.target.value)} /> 
-            <button className="btn btn-add" onClick={addTodo}>新增</button>
+        <div id="app">
+            <h2>React 待辦事項</h2>
+            <input className="input-todo" type="text" value={newTodoText} onChange={e => setNewTodoText(e.target.value)} /> 
+            <button onClick={addTodo}>新增</button>
           
-            <div className="todo-list">
+            <ul>
                 {todos.map((item,index)=>{
                     return (
-                        <div className="todo-item" key={index}>
-                            <div>{item.id}{item.text}
-                                <button className="btn btn-edit" onClick={() => startEditing(item.id, item.text)}>編輯</button> 
-                                <button className="btn btn-delete" onClick={() => deleteTodo(item.id)}>刪除</button>
-                            </div>
-                        </div>
+                        <li key={index}>
+                           {item.text}
+                            <button onClick={() => startEditing(item.id, item.text)}>編輯</button> 
+                            <button className="delete-button" onClick={() => deleteTodo(item.id)}>刪除</button>
+                        </li>
                     )
                 })}
-            </div>
+            </ul>
             {editingTodo !== null && (
-                <div className="editing-item">
+                <div>
                     <input type="text" value={editingText} onChange={e => setEditingText(e.target.value)} /> 
-                <button className="btn btn-update" onClick={updateTodo}>完成編輯</button>
+                <button onClick={updateTodo}>完成編輯</button>
                 </div>
             )}
         </div>
@@ -167,7 +156,4 @@
 </body>
 
 </html>
-
-
-
 
