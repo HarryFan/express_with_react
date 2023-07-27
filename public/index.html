@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>待辦事項</title> <!-- 更改網頁標題 -->
+    <title>React 待辦事項</title> <!-- 更改網頁標題 -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
@@ -81,7 +81,7 @@
     // 渲染函式
     return (
         <div>
-            <h1>待辦事項</h1>
+            <h1>React 待辦事項</h1>
             <input class="item" type="text" value={newTodoText} onChange={e => setNewTodoText(e.target.value)} /> 
             <button onClick={addTodo}>新增</button>
           
