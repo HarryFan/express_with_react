@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="zh-TW"> <!-- 將語言設定繁體中文 -->
+<html lang="zh-TW">
+<!-- 將語言設定繁體中文 -->
 
 <head>
     <meta charset="UTF-8">
@@ -10,24 +11,29 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
-    <link rel="stylesheet" href="stylesheets/style.css">
+
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             color: #333;
+            padding: 50px;
+            font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
         }
+
         #app {
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             background-color: #fff;
         }
+
         h2 {
             color: #333;
             text-align: center;
         }
+
         button {
             margin-left: 10px;
             padding: 5px 10px;
@@ -36,20 +42,25 @@
             background-color: #007bff;
             cursor: pointer;
         }
+
         button:hover {
             background-color: #0056b3;
         }
+
         .input-todo {
-            width: 80%; 
+            width: 80%;
             padding: 5px;
         }
+
         .delete-button {
             background-color: #dc3545;
         }
+
         ul {
-            list-style: none; 
+            list-style: none;
             padding: 0;
         }
+
         li {
             margin-bottom: 10px;
         }
@@ -156,4 +167,3 @@
 </body>
 
 </html>
-

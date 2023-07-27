@@ -1,152 +1,117 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Vue2 Todo</title>
-<!-- 引入Vue.js  -->
-<script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
 
-<!-- 引入vueuse -->   
-<script src="https://unpkg.com/@vueuse/shared"></script>
-<script src="https://unpkg.com/@vueuse/core"></script>
+<head>
+  <meta charset="utf-8">
+  <title>Vue2 Todo</title>
+  <!-- 引入Vue.js  -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
 
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
-  }
-  
-  #app {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  }
-  
-  h2 {
-    color: #333;
-    text-align: center;
-  }
-  
-  .input-todo {
-    width: 80%; 
-    padding: 5px;
-  }
-  
-  button {
-    margin-left: 10px;
-    padding: 5px 10px;
-    border: none;
-    color: #fff;
-    background-color: #007bff;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  .delete-button {
-    background-color: #dc3545;
-  }
-  
-  ul {
-    list-style: none; 
-    padding: 0;
-  }
-  
-  li {
-    margin-bottom: 10px;
-  }
-</style>
-  </head>
-  <body>
-    <div id="app">
+  <!-- 引入vueuse -->
+  <script src="https://unpkg.com/@vueuse/shared"></script>
+  <script src="https://unpkg.com/@vueuse/core"></script>
 
-        <h2>Vue2 待辦事項</h2>
-      
-        <input class="input-todo" v-model="newTodoText" placeholder="新增待辦事項">
-      
-        <button class="add" @click="addTodo">新增</button>
-      
-        <ul>
-          <li v-for="todo in todos">
-            {{ todo.text }}  
-         
-            <button class="edit" @click="setEditingTodo(todo)">編輯</button> 
-            <button class="delete-button" @click="deleteTodo(todo.id)">刪除</button>
-          </li>
-        </ul>
-      
-        <input class="input-todo" v-model="editingTodo.text" v-if="editingTodo">
-        <button class="edit" @click="updateTodo" v-if="editingTodo">更新</button>
-      
-      </div>
-      
-      <script>
-      const app = new Vue({
-        el: '#app',
-        
-        data() {
-          return {
-            newTodoText: '',
-            editingTodo: null,
-            todos: []
-          }
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <!-- 引入Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-200 text-gray-800 p-12 font-sans">
+  <div id="app" class="max-w-md mx-auto p-6 bg-white shadow-md">
+
+    <h2 class="text-center text-gray-700">Vue2 待辦事項</h2>
+
+    <div class="flex items-center justify-between">
+      <input class="input-todo form-input mt-4 block w-3/4" v-model="newTodoText" placeholder="新增待辦事項">
+      <button class="add mt-4 px-4 py-2 rounded text-white bg-blue-500 hover:bg-blue-700 ml-4"
+        @click="addTodo">新增</button>
+    </div>
+
+    <ul class="list-none p-0">
+      <li v-for="todo in todos" class="mb-4 flex justify-between items-center">
+        {{ todo.text }}
+
+        <div class="flex items-center justify-end">
+          <button class="edit mt-2 px-4 py-2 rounded text-white bg-yellow-500 hover:bg-yellow-700"
+            @click="setEditingTodo(todo)">編輯</button>
+          <button class="delete-button mt-2 ml-2 px-4 py-2 rounded text-white bg-red-500 hover:bg-red-700"
+            @click="deleteTodo(todo.id)">刪除</button>
+        </div>
+      </li>
+    </ul>
+
+    <div class="flex items-center justify-between" v-if="editingTodo">
+      <input class="input-todo form-input mt-4 block w-3/4" v-model="editingTodo.text">
+      <button class="edit mt-4 px-4 py-2 rounded text-white bg-yellow-500 hover:bg-yellow-700 ml-4"
+        @click="updateTodo">更新</button>
+    </div>
+
+  </div>
+
+  <script>
+    const app = new Vue({
+      el: '#app',
+
+      data() {
+        return {
+          newTodoText: '',
+          editingTodo: null,
+          todos: []
+        }
+      },
+
+      methods: {
+        getTodos() {
+          axios.get('/todos')
+            .then(res => {
+              this.todos = res.data
+            })
         },
-      
-        methods: {
-          getTodos() {
-            axios.get('/todos')
-              .then(res => {
-                this.todos = res.data
-              }) 
-          },
-          
-          addTodo() {
-            const text = this.newTodoText
-            
-            axios.post('/todos', { text })
-              .then(res => {
-                this.todos.push(res.data)
-                this.newTodoText = ''  
-              })
-          },
-          
-          deleteTodo(id) {
-            axios.delete(`/todos/${id}`) 
-              .then(() => {
-                this.todos = this.todos.filter(t => t.id !== id)
-              })
-          },
-          
-          setEditingTodo(todo) {
-            this.editingTodo = todo
-          },
-          
-          updateTodo() {
-            axios.put(`/todos/${this.editingTodo.id}`, {
+
+        addTodo() {
+          const text = this.newTodoText
+
+          axios.post('/todos', {
+              text
+            })
+            .then(res => {
+              this.todos.push(res.data)
+              this.newTodoText = ''
+            })
+        },
+
+        deleteTodo(id) {
+          axios.delete(`/todos/${id}`)
+            .then(() => {
+              this.todos = this.todos.filter(t => t.id !== id)
+            })
+        },
+
+        setEditingTodo(todo) {
+          this.editingTodo = todo
+        },
+
+        updateTodo() {
+          axios.put(`/todos/${this.editingTodo.id}`, {
               text: this.editingTodo.text
             })
-              .then(res => {
-                const index = this.todos.findIndex(t => t.id === this.editingTodo.id)
-                this.todos.splice(index, 1, res.data)
-                this.editingTodo = null
-              })
-          }
-        },
-      
-        mounted() {
-          this.getTodos()
+            .then(res => {
+              const index = this.todos.findIndex(t => t.id === this.editingTodo.id)
+              this.todos.splice(index, 1, res.data)
+              this.editingTodo = null
+            })
         }
-        
-      })
-      </script>
+      },
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+      mounted() {
+        this.getTodos()
+      }
 
-  </body>
+    })
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+
+</body>
+
 </html>
