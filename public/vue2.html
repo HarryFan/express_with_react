@@ -1,134 +1,159 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Vue2 Todo</title>
-<!-- 引入Vue.js  -->
-<script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
 
-<!-- 引入vueuse -->   
-<script src="https://unpkg.com/@vueuse/shared"></script>
-<script src="https://unpkg.com/@vueuse/core"></script>
+<head>
+  <meta charset="utf-8">
+  <title>Vue2 Todo</title>
+  <!-- 引入Vue.js  -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
 
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f0f0f0;
-  }
-  
-  #app {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  }
-  
-  h2 {
-    color: #333;
-  }
-  
-  input, button {
-    padding: 10px;
-    margin: 5px 0;
-  }
-  
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  li {
-    margin: 10px 0;
-  }
-</style>
-  </head>
-  <body>
-    <div id="app">
+  <!-- 引入vueuse -->
+  <script src="https://unpkg.com/@vueuse/shared"></script>
+  <script src="https://unpkg.com/@vueuse/core"></script>
 
-        <h2>Vue2 待辦事項</h2>
-      
-        <input v-model="newTodoText" placeholder="新增待辦事項">
-      
-        <button @click="addTodo">新增</button>
-      
-        <ul>
-          <li v-for="todo in todos">
-            {{ todo.text }}  
-            <button @click="deleteTodo(todo.id)">刪除</button>
-            <button @click="setEditingTodo(todo)">編輯</button>
-          </li>
-        </ul>
-      
-        <input v-model="editingTodo.text" v-if="editingTodo">
-        <button @click="updateTodo" v-if="editingTodo">更新</button>
-      
-      </div>
-      
-      <script>
-      const app = new Vue({
-        el: '#app',
-        
-        data() {
-          return {
-            newTodoText: '',
-            editingTodo: null,
-            todos: []
-          }
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+
+      background-color: #f0f0f0;
+      color: #333;
+      padding: 50px;
+      font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    }
+
+    #app {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #333;
+      text-align: center;
+    }
+
+    .input-todo {
+      width: 80%;
+      padding: 5px;
+    }
+
+    button {
+      margin-left: 10px;
+      padding: 5px 10px;
+      border: none;
+      color: #fff;
+      background-color: #007bff;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .delete-button {
+      background-color: #dc3545;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+
+    <h2>Vue2 待辦事項</h2>
+
+    <input class="input-todo" v-model="newTodoText" placeholder="新增待辦事項">
+
+    <button class="add" @click="addTodo">新增</button>
+
+    <ul>
+      <li v-for="todo in todos">
+        {{ todo.text }}
+
+        <button class="edit" @click="setEditingTodo(todo)">編輯</button>
+        <button class="delete-button" @click="deleteTodo(todo.id)">刪除</button>
+      </li>
+    </ul>
+
+    <input class="input-todo" v-model="editingTodo.text" v-if="editingTodo">
+    <button class="edit" @click="updateTodo" v-if="editingTodo">更新</button>
+
+  </div>
+
+  <script>
+    const app = new Vue({
+      el: '#app',
+
+      data() {
+        return {
+          newTodoText: '',
+          editingTodo: null,
+          todos: []
+        }
+      },
+
+      methods: {
+        getTodos() {
+          axios.get('/todos')
+            .then(res => {
+              this.todos = res.data
+            })
         },
-      
-        methods: {
-          getTodos() {
-            axios.get('/todos')
-              .then(res => {
-                this.todos = res.data
-              }) 
-          },
-          
-          addTodo() {
-            const text = this.newTodoText
-            
-            axios.post('/todos', { text })
-              .then(res => {
-                this.todos.push(res.data)
-                this.newTodoText = ''  
-              })
-          },
-          
-          deleteTodo(id) {
-            axios.delete(`/todos/${id}`) 
-              .then(() => {
-                this.todos = this.todos.filter(t => t.id !== id)
-              })
-          },
-          
-          setEditingTodo(todo) {
-            this.editingTodo = todo
-          },
-          
-          updateTodo() {
-            axios.put(`/todos/${this.editingTodo.id}`, {
+
+        addTodo() {
+          const text = this.newTodoText
+
+          axios.post('/todos', {
+              text
+            })
+            .then(res => {
+              this.todos.push(res.data)
+              this.newTodoText = ''
+            })
+        },
+
+        deleteTodo(id) {
+          axios.delete(`/todos/${id}`)
+            .then(() => {
+              this.todos = this.todos.filter(t => t.id !== id)
+            })
+        },
+
+        setEditingTodo(todo) {
+          this.editingTodo = todo
+        },
+
+        updateTodo() {
+          axios.put(`/todos/${this.editingTodo.id}`, {
               text: this.editingTodo.text
             })
-              .then(res => {
-                const index = this.todos.findIndex(t => t.id === this.editingTodo.id)
-                this.todos.splice(index, 1, res.data)
-                this.editingTodo = null
-              })
-          }
-        },
-      
-        mounted() {
-          this.getTodos()
+            .then(res => {
+              const index = this.todos.findIndex(t => t.id === this.editingTodo.id)
+              this.todos.splice(index, 1, res.data)
+              this.editingTodo = null
+            })
         }
-        
-      })
-      </script>
+      },
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
-    <script src="app.js"></script>
-  </body>
+      mounted() {
+        this.getTodos()
+      }
+
+    })
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+
+</body>
+
 </html>
