@@ -1,0 +1,130 @@
+<!DOCTYPE html> 
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8"> 
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue 3 Todo List</title> 
+  <!-- 引入 Vue 3 CDN -->
+  <script src="https://unpkg.com/vue@next"></script>
+  <!-- 引入 axios CDN -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body> 
+  <div id="app">
+    <h2>待辦事項</h2> 
+
+    <!-- 輸入待辦事項 -->
+    <input v-model="newTodoText">
+    <!-- 新增待辦事項按鈕 -->
+    <button @click="addTodo">新增</button> 
+
+    <!-- 待辦事項列表 -->
+    <ul>
+      <li v-for="todo in todos"> 
+        {{ todo.text }}
+        <!-- 編輯待辦事項按鈕 -->
+        <button @click="setEditingTodo(todo)">編輯</button> <!-- 點擊按鈕時呼叫 setEditingTodo 方法並傳入當前的 todo -->
+        <!-- 刪除待辦事項按鈕 -->
+        <button @click="deleteTodo(todo.id)">刪除</button> <!-- 點擊按鈕時呼叫 deleteTodo 方法並傳入待辦事項的 id -->
+      </li>
+    </ul>
+
+    <!-- 編輯待辦事項區塊 -->
+    <div v-if="editingTodo"> <!-- 當 editingTodo 為真時顯示此區塊 -->
+      <input v-model="editingTodo.text"> <!-- 雙向綁定正在編輯的待辦事項的文字 -->
+      <!-- 更新待辦事項按鈕 -->
+      <button @click="updateTodo">更新</button> <!-- 點擊按鈕時呼叫 updateTodo 方法 -->
+    </div>
+  </div>
+
+
+
+  <script> 
+    const {
+      createApp,
+      ref,
+      onMounted
+    } = Vue
+
+    const app = createApp({
+      setup() { 
+        const newTodoText = ref('') // 新待辦事項文字
+        const editingTodo = ref(null) // 正在編輯的待辦事項
+        const todos = ref([]) // 所有待辦事項
+
+        // 取得所有待辦事項
+        const getTodos = () => { 
+          axios.get('/todos')
+            .then(res => {
+              todos.value = res.data　// 取得待辦事項後，更新 todos 陣列
+            })
+        }
+
+        // 新增待辦事項
+        const addTodo = () => { 
+          const text = newTodoText.value
+
+          axios.post('/todos', { 
+              text
+            })
+            .then(res => {
+              todos.value.push(res.data) // 新增待辦事項後，更新 todos 陣列
+              newTodoText.value = '' 
+            })
+        }
+
+        // 刪除待辦事項
+        const deleteTodo = id => { 
+          axios.delete(`/todos/${id}`)
+            .then(() => {
+              todos.value = todos.value.filter(t => t.id !== id) // 刪除待辦事項後，更新 todos 陣列
+            })
+        }
+
+       // 設定正在編輯的待辦事項
+        const setEditingTodo = (todo) => {
+          editingTodo.value = todo;
+        }
+
+
+        // 更新待辦事項
+        const updateTodo = () => {
+          axios.put(`/todos/${editingTodo.value.id}`, { 
+              text: editingTodo.value.text
+            })
+            .then(res => {
+              const index = todos.value.findIndex(t => t.id === editingTodo.value.id) // 取得原本的待辦事項在陣列中的索引值
+              todos.value.splice(index, 1, res.data) // 刪除原本的待辦事項，並插入更新後的待辦事項
+              editingTodo.value = null 
+            })
+        }
+
+        // 當元件掛載時，取得所有待辦事項
+        onMounted(() => { 
+          getTodos() 
+        })
+
+        return {
+          newTodoText,
+          editingTodo,
+          todos,
+          getTodos,
+          addTodo,
+          deleteTodo,
+          setEditingTodo,
+          updateTodo
+        }
+      }
+    })
+
+    // 掛載 Vue 應用程式
+    app.mount('#app') 
+  </script>
+
+</body>
+
+</html>
+
