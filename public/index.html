@@ -78,7 +78,7 @@
         const {useState,useEffect} = React; // 從 React 中引入 useState 和 useEffect
 
     function App() {
-    const [todos, setTodos] = useState([]); // 儲存待辦事項的狀態
+    const [todos, setTodos] = useState([]); // 儲存待辦事項的狀態 [資料,設定資料]
     const [newTodoText, setNewTodoText] = useState(""); // 儲存新待辦事項的文字的狀態
     const [editingTodo, setEditingTodo] = useState(null); // 儲存正在編輯的待辦事項的狀態
     const [editingText, setEditingText] = useState(""); // 儲存正在編輯的待辦事項的文字的狀態
