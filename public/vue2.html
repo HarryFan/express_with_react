@@ -90,7 +90,7 @@
       </li>
     </ul>
 
-    <input class="input-todo" v-model="editingTodo.text" v-if="editingTodo">
+    <input class="input-todo" v-model="temporaryText" v-if="editingTodo">
     <button class="edit" @click="updateTodo" v-if="editingTodo">更新</button>
 
   </div>
@@ -103,6 +103,7 @@
         return {
           newTodoText: '',
           editingTodo: null,
+          temporaryText: '',
           todos: []
         }
       },
@@ -135,17 +136,19 @@
         },
 
         setEditingTodo(todo) {
-          this.editingTodo = todo
+          this.editingTodo = Object.assign({}, todo)
+          this.temporaryText = todo.text
         },
 
         updateTodo() {
           axios.put(`/todos/${this.editingTodo.id}`, {
-              text: this.editingTodo.text
+              text: this.temporaryText
             })
             .then(res => {
               const index = this.todos.findIndex(t => t.id === this.editingTodo.id)
               this.todos.splice(index, 1, res.data)
               this.editingTodo = null
+              this.temporaryText = ''
             })
         }
       },
