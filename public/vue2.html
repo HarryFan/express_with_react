@@ -4,14 +4,17 @@
 <head>
   <meta charset="utf-8">
   <title>Vue2 Todo</title>
-  <!-- 引入Vue.js  -->
+  <!-- 引入Vue.js -->
   <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
 
   <!-- 引入vueuse -->
   <script src="https://unpkg.com/@vueuse/shared"></script>
   <script src="https://unpkg.com/@vueuse/core"></script>
 
+  <!-- 引入axios -->
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <!-- 樣式設定 -->
   <style>
     body {
 
@@ -77,19 +80,27 @@
 
     <h2>Vue2 待辦事項</h2>
 
+    <!-- 新增待辦事項輸入框 -->
     <input class="input-todo" v-model="newTodoText" placeholder="新增待辦事項">
 
+    <!-- 新增待辦事項按鈕 -->
     <button class="add" @click="addTodo">新增</button>
 
+    <!-- 待辦事項列表 -->
     <ul>
       <li v-for="todo in todos">
+        <!-- 待辦事項內容 -->
         {{ todo.text }}
 
+        <!-- 編輯按鈕 -->
         <button class="edit" @click="setEditingTodo(todo)">編輯</button>
+
+        <!-- 刪除按鈕 -->
         <button class="delete-button" @click="deleteTodo(todo.id)">刪除</button>
       </li>
     </ul>
 
+    <!-- 編輯待辦事項輸入框及更新按鈕 -->
     <input class="input-todo" v-model="temporaryText" v-if="editingTodo">
     <button class="edit" @click="updateTodo" v-if="editingTodo">更新</button>
 
@@ -101,14 +112,15 @@
 
       data() {
         return {
-          newTodoText: '',
-          editingTodo: null,
-          temporaryText: '',
-          todos: []
+          newTodoText: '', // 新待辦事項輸入的文字
+          editingTodo: null, // 正在編輯的待辦事項
+          temporaryText: '', // 暫存待編輯的待辦事項內容
+          todos: [] // 所有待辦事項
         }
       },
 
       methods: {
+        // 取得所有待辦事項
         getTodos() {
           axios.get('/todos')
             .then(res => {
@@ -116,6 +128,7 @@
             })
         },
 
+        // 新增待辦事項
         addTodo() {
           const text = this.newTodoText
 
@@ -128,6 +141,7 @@
             })
         },
 
+        // 刪除待辦事項
         deleteTodo(id) {
           axios.delete(`/todos/${id}`)
             .then(() => {
@@ -135,11 +149,13 @@
             })
         },
 
+        // 設定正在編輯的待辦事項
         setEditingTodo(todo) {
           this.editingTodo = Object.assign({}, todo)
           this.temporaryText = todo.text
         },
 
+        // 更新待辦事項
         updateTodo() {
           axios.put(`/todos/${this.editingTodo.id}`, {
               text: this.temporaryText
@@ -153,8 +169,9 @@
         }
       },
 
+      // 當 Vue 實例掛載時執行
       mounted() {
-        this.getTodos()
+        this.getTodos() // 取得所有待辦事項
       }
 
     })
