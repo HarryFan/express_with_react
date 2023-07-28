@@ -93,10 +93,10 @@
 
     <!-- 編輯待辦事項區塊 -->
     <div v-if="editingTodo">
-      <!-- 當 editingTodo 為真時顯示此區塊 -->
-      <input v-model="editingTodo.text" class="input-todo"> <!-- 雙向綁定正在編輯的待辦事項的文字 -->
+      <!-- 將雙向綁定改為綁定到 temporaryText -->
+      <input v-model="temporaryText" class="input-todo">
       <!-- 更新待辦事項按鈕 -->
-      <button @click="updateTodo">更新</button> <!-- 點擊按鈕時呼叫 updateTodo 方法 -->
+      <button @click="updateTodo">更新</button>
     </div>
   </div>
 
@@ -114,6 +114,7 @@
         const newTodoText = ref('') // 新待辦事項文字
         const editingTodo = ref(null) // 正在編輯的待辦事項
         const todos = ref([]) // 所有待辦事項
+        const temporaryText = ref('') // 新增的 ref 用於保存臨時的待辦事項文本
 
         // 取得所有待辦事項
         const getTodos = () => {
@@ -147,18 +148,20 @@
         // 設定正在編輯的待辦事項
         const setEditingTodo = (todo) => {
           editingTodo.value = todo;
+          temporaryText.value = todo.text; // 當點擊“編輯”按鈕時，將待辦事項的文本設置到 temporaryText 中
         }
 
 
         // 更新待辦事項
         const updateTodo = () => {
           axios.put(`/todos/${editingTodo.value.id}`, {
-              text: editingTodo.value.text
+              text: temporaryText.value // 當點擊“更新”按鈕時，從 temporaryText 中取出文本來更新待辦事項
             })
             .then(res => {
-              const index = todos.value.findIndex(t => t.id === editingTodo.value.id) // 取得原本的待辦事項在陣列中的索引值
-              todos.value.splice(index, 1, res.data) // 刪除原本的待辦事項，並插入更新後的待辦事項
+              const index = todos.value.findIndex(t => t.id === editingTodo.value.id)
+              todos.value.splice(index, 1, res.data)
               editingTodo.value = null
+              temporaryText.value = '' // 更新待辦事項後，清空 temporaryText
             })
         }
 
@@ -175,7 +178,8 @@
           addTodo,
           deleteTodo,
           setEditingTodo,
-          updateTodo
+          updateTodo,
+          temporaryText // 這裏返回 temporaryText，這樣在模板中就能使用它
         }
       }
     })
