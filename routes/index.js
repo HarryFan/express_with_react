@@ -1,48 +1,142 @@
-const express = require('express'); // 引入 express 模組
-const router = express.Router(); // 建立一個新的路由器
+const express = require('express');
+const router = express.Router();
 
-const todos = [ // 建立一個待辦事項的陣列
+const todos = [
   {id: 1, text: 'Learn React'}, 
   {id: 2, text: 'Learn Redux'},
   {id: 3, text: 'Learn React Router'},
- 
-]; // 這是我們的待辦事項列表
+];
 
-/* GET home page. */
-router.get('/todos', function(req, res, next) { // 處理 GET 請求，回傳待辦事項列表
-  res.json(todos); // 將待辦事項列表以 JSON 格式回傳
+
+/**
+ * @swagger
+ * tags:
+ *   name: Todo
+ *   description: Todo API
+ */
+
+
+
+/**
+ * @swagger
+ * /todos:
+ *   get:
+ *     description: 獲取所有待辦事項
+ *     responses:
+ *       200:
+ *         description: 以 JSON 格式回傳待辦事項列表
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: number
+ *                   text:
+ *                     type: string
+ */
+router.get('/todos', function(req, res, next) {
+  res.json(todos);
 });
 
-let todoId = todos.length; // 設定新待辦事項的 ID，其值為待辦事項列表的長度
+let todoId = todos.length;
 
-// POST: Create a new todo
-router.post('/todos', function(req, res, next) { // 處理 POST 請求，新增待辦事項
-  const newTodo = { id: ++todoId, text: req.body.text }; // 建立新的待辦事項
-  todos.push(newTodo); // 將新的待辦事項加入到待辦事項列表中
-  res.json(newTodo); // 將新的待辦事項以 JSON 格式回傳
+/**
+ * @swagger
+ * /todos:
+ *   post:
+ *     description: 創建新的待辦事項
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               text:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: 以 JSON 格式回傳創建的待辦事項
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: number
+ *                 text:
+ *                   type: string
+ */
+router.post('/todos', function(req, res, next) {
+  const newTodo = { id: ++todoId, text: req.body.text };
+  todos.push(newTodo);
+  res.json(newTodo);
 });
 
-// PUT: Update an existing todo
-router.put('/todos/:id', function(req, res, next) { // 處理 PUT 請求，更新待辦事項
-  const todo = todos.find(todo => todo.id == req.params.id); // 找到要更新的待辦事項
+/**
+ * @swagger
+ * /todos/{id}:
+ *   put:
+ *     description: 更新已存在的待辦事項
+ *     parameters:
+ *     - in: path
+ *       name: id
+ *       required: true
+ *       description: 需要更新的待辦事項的 ID
+ *       schema:
+ *         type: number
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               text:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: 以 JSON 格式回傳更新後的待辦事項
+ *       404:
+ *         description: 找不到待辦事項
+ */
+router.put('/todos/:id', function(req, res, next) {
+  const todo = todos.find(todo => todo.id == req.params.id);
   if (todo) {
-    todo.text = req.body.text; // 更新待辦事項的內容
-    res.json(todo); // 將更新後的待辦事項以 JSON 格式回傳
+    todo.text = req.body.text;
+    res.json(todo);
   } else {
-    res.status(404).send('Todo not found'); // 如果找不到待辦事項，回傳 404 錯誤
+    res.status(404).send('Todo not found');
   }
 });
 
-// DELETE: Delete an existing todo
-router.delete('/todos/:id', function(req, res, next) { // 處理 DELETE 請求，刪除待辦事項
-  const index = todos.findIndex(todo => todo.id == req.params.id); // 找到要刪除的待辦事項的索引
+/**
+ * @swagger
+ * /todos/{id}:
+ *   delete:
+ *     description: 刪除已存在的待辦事項
+ *     parameters:
+ *     - in: path
+ *       name: id
+ *       required: true
+ *       description: 需要刪除的待辦事項的 ID
+ *       schema:
+ *         type: number
+ *     responses:
+ *       200:
+ *         description: 回傳表示待辦事項已被刪除的訊息
+ *       404:
+ *         description: 找不到待辦事項
+ */
+router.delete('/todos/:id', function(req, res, next) {
+  const index = todos.findIndex(todo => todo.id == req.params.id);
   if (index !== -1) {
-    todos.splice(index, 1); // 刪除該待辦事項
-    res.json({ message: 'Todo deleted' }); // 刪除成功，回傳訊息
+    todos.splice(index, 1);
+    res.json({ message: '待辦事項已刪除' });
   } else {
-    res.status(404).send('Todo not found'); // 如果找不到待辦事項，回傳 404 錯誤
+    res.status(404).send('找不到待辦事項');
   }
 });
 
-module.exports = router; // 將路由器匯出，讓其他模組可以使用
-
+module.exports = router;

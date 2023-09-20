@@ -22,6 +22,11 @@
    - Vue2 的待辦事項清單：[localhost:3000/vue2.html](http://localhost:3000/vue2.html)
    - Vue3 的待辦事項清單：[localhost:3000/vue3.html](http://localhost:3000/vue3.html)
 
+
+## Swagger API 文檔
+
+你可以在瀏覽器中訪問 [localhost:3000/api-docs](http://localhost:3000/api-docs) 來查看 Swagger 的 API 文檔，以瞭解後端路由的更多詳細資訊。
+
 ## 後端
 
 後端使用 Express.js 框架。待辦事項存儲在記憶體中，在伺服器運行期間保持不變。
